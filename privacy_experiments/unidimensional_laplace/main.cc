@@ -51,9 +51,10 @@ void save_stuff_to_file(int ndata, double alpha, int repnum,
       std::to_string(alpha) + +"_rep_" + std::to_string(repnum) + "_";
 
   Eigen::VectorXd grid = Eigen::VectorXd::LinSpaced(1000, -10.0, 10.0);
-  Eigen::MatrixXd dens = bayesmix::eval_lpdf_parallel(algo, coll, grid);
-  bayesmix::write_matrix_to_file(dens, base_fname + "eval_dens.csv");
-
+  if (repnum == 0) {
+    Eigen::MatrixXd dens = bayesmix::eval_lpdf_parallel(algo, coll, grid);
+    bayesmix::write_matrix_to_file(dens, base_fname + "eval_dens.csv");
+  }
   Eigen::MatrixXi clus_allocs = get_cluster_mat(coll, ndata);
   // bayesmix::write_matrix_to_file(clus_allocs, base_fname +
   // "clus_chain.csv");
@@ -70,26 +71,26 @@ void save_stuff_to_file(int ndata, double alpha, int repnum,
   }
   bayesmix::write_matrix_to_file(nclus_chain, base_fname + "nclus_chain.csv");
 
-  Eigen::VectorXd entropy_chain(clus_allocs.rows());
-  for (int i = 0; i < clus_allocs.rows(); i++) {
-    entropy_chain(i) = cluster_entropy(clus_allocs.row(i).transpose());
-  }
-  bayesmix::write_matrix_to_file(entropy_chain,
-                                 base_fname + "entropy_chain.csv");
+  // Eigen::VectorXd entropy_chain(clus_allocs.rows());
+  // for (int i = 0; i < clus_allocs.rows(); i++) {
+  //   entropy_chain(i) = cluster_entropy(clus_allocs.row(i).transpose());
+  // }
+  // bayesmix::write_matrix_to_file(entropy_chain,
+  //                                base_fname + "entropy_chain.csv");
 
-  Eigen::VectorXd loglik_chain =
-      bayesmix::eval_lpdf_parallel(algo, coll, private_data).rowwise().sum();
-  bayesmix::write_matrix_to_file(loglik_chain,
-                                 base_fname + "loglik_chain.csv");
+  // Eigen::VectorXd loglik_chain =
+  //     bayesmix::eval_lpdf_parallel(algo, coll, private_data).rowwise().sum();
+  // bayesmix::write_matrix_to_file(loglik_chain,
+  //                                base_fname + "loglik_chain.csv");
 
-  Eigen::VectorXd true_dens = eval_true_dens(grid);
-  Eigen::VectorXd error_chain =
-      (dens.array().exp().matrix().rowwise() - true_dens.transpose())
-          .rowwise()
-          .squaredNorm() *
-      (grid[1] - grid[0]);
-  bayesmix::write_matrix_to_file(error_chain,
-                                 base_fname + "l2error_chain.csv");
+  // Eigen::VectorXd true_dens = eval_true_dens(grid);
+  // Eigen::VectorXd error_chain =
+  //     (dens.array().exp().matrix().rowwise() - true_dens.transpose())
+  //         .rowwise()
+  //         .squaredNorm() *
+  //     (grid[1] - grid[0]);
+  // bayesmix::write_matrix_to_file(error_chain,
+  //                                base_fname + "l2error_chain.csv");
 
   Eigen::MatrixXd arate(1, 1);
   if (algo_name == "neal2") {
