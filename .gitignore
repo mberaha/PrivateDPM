@@ -1,3 +1,11 @@
+*/.ipynb_checkpoints/
+*.tar.gz
+build/*
+*.csv
+*.txt
+*.pdf
+*.png
+
 # Prerequisites
 *.d
 

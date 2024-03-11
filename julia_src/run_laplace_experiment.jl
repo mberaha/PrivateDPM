@@ -3,15 +3,16 @@ using CSV
 using Random
 using ProgressBars
 using Tables
+using DataFrames
 using Printf
 
 include("MCMC/private_neal5.jl")
 
 M = 5
-NREP = 48
+NREP = 1
 
  
-Random.seed!(20230719)
+Random.seed!(2024)
 
 function simulate_private_data(ndata) 
     means = [-5, 0, 5]
@@ -27,14 +28,19 @@ function run_experiment(ndata, repnum)
     private_data, clus = simulate_private_data(ndata);
 
     priv_levels = [1.0, 2.0, 5.0, 10.0, 50.0]
-    hyperparams = HyperParams(0.0, 0.1, 3.0, 3.0, 1.0)
+    hyperparams = NIGHyperParams(0.0, 0.1, 3.0, 3.0, 5.0)
 
     for alpha in priv_levels
         base_fname = "out/neal2m$(M)_ndata_$(ndata)_alpha_$(@sprintf("%.6f", alpha))_rep_$(repnum)_"
         eps = 20.0 / alpha
-        sanitized_data = private_data .+ rand(Laplace(0, eps), ndata)
+        
+        # read from csv
+        input_fname = "/Users/marioberaha/research/bnp/privacy/privacy_experiments/unidimensional_laplace/out/_ndata_$(ndata)_alpha_$(@sprintf("%.6f", alpha))_rep_$(repnum)_sanitized_data.csv"
+        sanitized_data = CSV.read(input_fname, DataFrame, header=false).Column1
+
+        # sanitized_data = private_data .+ rand(Laplace(0, eps), ndata)
         chains, arate = run_neal5(
-            sanitized_data, hyperparams, eps, 5000, 10000, M);
+            sanitized_data, hyperparams, eps, 150000, 160000, M);
         if repnum == 0
             xgrid = LinRange(-10, 10, 1000)
             dens = [eval_dens(s, hyperparams, xgrid) for s in chains];
@@ -59,8 +65,9 @@ end
 
 function main()
     i = 0
-    @Threads.threads for i in ProgressBar(1:NREP-1)
-     @Threads.threads for ndata in [50, 100, 200, 500, 1000]
+    @Threads.threads for i in ProgressBar(0:NREP-1)
+    #  @Threads.threads for ndata in [50, 100, 200, 500, 1000]
+    for ndata in [200]
             run_experiment(ndata, i)
         end
     end
