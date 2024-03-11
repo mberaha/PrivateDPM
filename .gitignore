@@ -2,7 +2,6 @@
 *.tar.gz
 build/*
 *.csv
-*.txt
 *.pdf
 *.png
 
