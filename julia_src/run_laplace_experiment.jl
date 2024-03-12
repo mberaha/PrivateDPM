@@ -8,6 +8,12 @@ using Printf
 
 include("MCMC/private_neal5.jl")
 
+CURR_DIR = @__DIR__
+OUT_DIR = joinpath(CURR_DIR, "../privacy_experiments/unidimensional_laplace/out")
+println(OUT_DIR)
+
+return -1
+
 M = 5
 NREP = 1
 
