@@ -36,11 +36,11 @@ function run_experiment(ndata, repnum)
     hyperparams = NIGHyperParams(0.0, 0.1, 3.0, 3.0, 5.0)
 
     for alpha in priv_levels
-        base_fname = "out/neal2m$(M)_ndata_$(ndata)_alpha_$(@sprintf("%.6f", alpha))_rep_$(repnum)_"
+        base_fname = OUT_DIR * "neal2m$(M)_ndata_$(ndata)_alpha_$(@sprintf("%.6f", alpha))_rep_$(repnum)_"
         eps = 20.0 / alpha
         
         # read from csv
-        input_fname = "/Users/marioberaha/research/bnp/privacy/privacy_experiments/unidimensional_laplace/out/_ndata_$(ndata)_alpha_$(@sprintf("%.6f", alpha))_rep_$(repnum)_sanitized_data.csv"
+        input_fname = OUT_DIR * "/_ndata_$(ndata)_alpha_$(@sprintf("%.6f", alpha))_rep_$(repnum)_sanitized_data.csv"
         sanitized_data = CSV.read(input_fname, DataFrame, header=false).Column1
 
         # sanitized_data = private_data .+ rand(Laplace(0, eps), ndata)
