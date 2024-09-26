@@ -73,6 +73,8 @@ void save_stuff_to_file(int ndata, double alpha, double delta, int repnum,
 
   if (repnum == 0) {
     bayesmix::write_matrix_to_file(dens, base_fname + "eval_dens.csv");
+    static_cast<MemoryCollector*>(coll)->write_to_file<bayesmix::AlgorithmState>(
+      base_fname + "chains.recordio");
   }
 
   Eigen::MatrixXi clus_allocs = get_cluster_mat(coll, ndata);
@@ -91,26 +93,26 @@ void save_stuff_to_file(int ndata, double alpha, double delta, int repnum,
   }
   bayesmix::write_matrix_to_file(nclus_chain, base_fname + "nclus_chain.csv");
 
-  Eigen::VectorXd entropy_chain(clus_allocs.rows());
-  for (int i = 0; i < clus_allocs.rows(); i++) {
-    entropy_chain(i) = cluster_entropy(clus_allocs.row(i).transpose());
-  }
-  bayesmix::write_matrix_to_file(entropy_chain,
-                                 base_fname + "entropy_chain.csv");
+  // Eigen::VectorXd entropy_chain(clus_allocs.rows());
+  // for (int i = 0; i < clus_allocs.rows(); i++) {
+  //   entropy_chain(i) = cluster_entropy(clus_allocs.row(i).transpose());
+  // }
+  // bayesmix::write_matrix_to_file(entropy_chain,
+  //                                base_fname + "entropy_chain.csv");
 
-  Eigen::VectorXd loglik_chain =
-      bayesmix::eval_lpdf_parallel(algo, coll, private_data).rowwise().sum();
-  bayesmix::write_matrix_to_file(loglik_chain,
-                                 base_fname + "loglik_chain.csv");
+  // Eigen::VectorXd loglik_chain =
+  //     bayesmix::eval_lpdf_parallel(algo, coll, private_data).rowwise().sum();
+  // bayesmix::write_matrix_to_file(loglik_chain,
+  //                                base_fname + "loglik_chain.csv");
 
-  Eigen::VectorXd true_dens = eval_true_dens(grid);
-  Eigen::VectorXd error_chain =
-      (dens.array().exp().matrix().rowwise() - true_dens.transpose())
-          .rowwise()
-          .squaredNorm() *
-      (grid[1] - grid[0]);
-  bayesmix::write_matrix_to_file(error_chain,
-                                 base_fname + "l2error_chain.csv");
+  // Eigen::VectorXd true_dens = eval_true_dens(grid);
+  // Eigen::VectorXd error_chain =
+  //     (dens.array().exp().matrix().rowwise() - true_dens.transpose())
+  //         .rowwise()
+  //         .squaredNorm() *
+  //     (grid[1] - grid[0]);
+  // bayesmix::write_matrix_to_file(error_chain,
+  //                                base_fname + "l2error_chain.csv");
 }
 
 std::shared_ptr<PrivateNeal2> get_private_neal2() {
@@ -132,7 +134,7 @@ std::shared_ptr<PrivateNeal2> get_private_neal2() {
 
   algo->set_hierarchy(hier);
   algo->set_mixing(mixing);
-  algo->set_verbose(false);
+  // algo->set_verbose(false);
   return algo;
 }
 
@@ -155,7 +157,7 @@ std::shared_ptr<Neal2Algorithm> get_neal2(double eps_sq) {
 
   algo->set_hierarchy(hier);
   algo->set_mixing(mixing);
-  algo->set_verbose(false);
+  // algo->set_verbose(false);
   return algo;
 }
 
@@ -179,7 +181,7 @@ std::shared_ptr<Neal2Algorithm> get_neal3(double eps_sq) {
   algo->read_params_from_proto(algo_proto);
   algo->set_hierarchy(hier);
   algo->set_mixing(mixing);
-  algo->set_verbose(false);
+  // algo->set_verbose(false);
   return algo;
 }
 
@@ -241,7 +243,7 @@ void run_experiment(int ndata, int repnum) {
 
 int main() {
   int ndata = 250;
-  int nrep = 48;
+  int nrep = 1;
 #pragma omp parallel for
   for (int i = 0; i < nrep; i++) {
     {

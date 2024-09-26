@@ -40,6 +40,12 @@ add_executable(blood $<TARGET_OBJECTS:bayesmix>
     utils.cc
 )
 
+add_executable(run_private $<TARGET_OBJECTS:bayesmix>
+    run_from_file.cc
+    utils.h
+    utils.cc
+)
+
 target_include_directories(laplace1d PUBLIC ${INCLUDE_PATHS})
 target_link_libraries(laplace1d PUBLIC ${LINK_LIBRARIES})
 target_compile_options(laplace1d PUBLIC ${COMPILE_OPTIONS})
@@ -63,3 +69,8 @@ target_compile_options(global PUBLIC ${COMPILE_OPTIONS})
 target_include_directories(blood PUBLIC ${INCLUDE_PATHS})
 target_link_libraries(blood PUBLIC ${LINK_LIBRARIES})
 target_compile_options(blood PUBLIC ${COMPILE_OPTIONS})
+
+
+target_include_directories(run_private PUBLIC ${INCLUDE_PATHS})
+target_link_libraries(run_private PUBLIC ${LINK_LIBRARIES})
+target_compile_options(run_private PUBLIC ${COMPILE_OPTIONS})

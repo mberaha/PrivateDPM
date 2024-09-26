@@ -9,7 +9,7 @@ using Printf
 include("MCMC/private_neal5.jl")
 
 CURR_DIR = @__DIR__
-OUT_DIR = joinpath(CURR_DIR, "../privacy_experiments/unidimensional_laplace/out")
+OUT_DIR = joinpath(CURR_DIR, "../privacy_experiments/unidimensional_laplace/out/")
 println(OUT_DIR)
 
 
@@ -40,7 +40,7 @@ function run_experiment(ndata, repnum)
         eps = 20.0 / alpha
         
         # read from csv
-        input_fname = OUT_DIR * "/_ndata_$(ndata)_alpha_$(@sprintf("%.6f", alpha))_rep_$(repnum)_sanitized_data.csv"
+        input_fname = OUT_DIR * "_ndata_$(ndata)_alpha_$(@sprintf("%.6f", alpha))_rep_$(repnum)_sanitized_data.csv"
         sanitized_data = CSV.read(input_fname, DataFrame, header=false).Column1
 
         # sanitized_data = private_data .+ rand(Laplace(0, eps), ndata)
@@ -70,9 +70,8 @@ end
 
 function main()
     i = 0
-    @Threads.threads for i in ProgressBar(0:NREP-1)
-    #  @Threads.threads for ndata in [50, 100, 200, 500, 1000]
-    for ndata in [200]
+    @Threads.threads for i in ProgressBar(16:47)
+    for ndata in [50, 100, 200, 500, 1000]
             run_experiment(ndata, i)
         end
     end

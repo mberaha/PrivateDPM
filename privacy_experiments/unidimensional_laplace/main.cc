@@ -148,7 +148,7 @@ void run_experiment(int ndata, int repnum) {
         std::make_shared<PrivateConditionalAlgorithm<BlockedGibbsAlgorithm>>();
 
     std::map<std::string, std::shared_ptr<BaseAlgorithm>> algos;
-    // algos.insert(std::make_pair("neal2", neal2algo));
+    algos.insert(std::make_pair("neal2", neal2algo));
     algos.insert(std::make_pair("slice", slicealgo));
     // algos.insert(std::make_pair("blockedgibbs", bgalgo));
 
@@ -185,7 +185,7 @@ void run_experiment(int ndata, int repnum) {
                                      hier->get_mutable_prior());
       algo->set_hierarchy(hier);
       algo->set_mixing(mixing);
-      algo->set_verbose(false);
+      // algo->set_verbose(false);
 
       BaseCollector* coll = new MemoryCollector();
 
@@ -210,11 +210,11 @@ void run_experiment(int ndata, int repnum) {
 }
 
 int main() {
-  std::vector<int> ndata = {50, 100, 200, 500, 1000};
-  int nrep = 48;
+  // std::vector<int> ndata = {50, 100, 200, 500, 1000};
+  // int nrep = 48;
 
-  // std::vector<int> ndata = {200};
-  // int nrep = 1;
+  std::vector<int> ndata = {200};
+  int nrep = 1;
 
 #pragma omp parallel for
   for (int i = 0; i < nrep; i++) {

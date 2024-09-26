@@ -173,20 +173,20 @@ void run_experiment(int ndata, int repnum) {
 
 int main() {
   int ndata = 250;
-  //   int nrep = 6;
+    int nrep = 48;
 
-  // #pragma omp parallel for
-  //   for (int i = 0; i < nrep; i++) {
-  //     {
-  // #pragma omp critical
-  //       std::cout << "repnum: " << i << std::endl;
-  //     }
-  //     run_experiment(ndata, i);
-  //   }
+  #pragma omp parallel for
+    for (int i = 0; i < nrep; i++) {
+      {
+  #pragma omp critical
+        std::cout << "repnum: " << i << std::endl;
+      }
+      run_experiment(ndata, i);
+    }
 
-  int repnum = 0;
-  double alpha = 10.0;
-  auto [private_data, clus] = simulate_private_data(ndata);
+  // int repnum = 0;
+  // double alpha = 10.0;
+  // auto [private_data, clus] = simulate_private_data(ndata);
   // std::shared_ptr<PrivateNeal2> lap_algo = get_algo1d(
   //       PARAM_DIR + "bgg_params.asciipb", PARAM_DIR + "dp_gamma.asciipb",
   //       PARAM_DIR + "algo.asciipb", "BetaGG");
@@ -211,31 +211,31 @@ int main() {
 
   // delete lap_coll;
 
-  std::vector<int> Js = {2, 4, 6};
+  // std::vector<int> Js = {2, 4, 6};
 
-  for (int& j : Js) {
-    std::shared_ptr<PrivateNeal2> wavelet_algo = get_algo1d(
-        PARAM_DIR + "bgg_params.asciipb", PARAM_DIR + "dp_gamma.asciipb",
-        PARAM_DIR + "algo.asciipb", "BetaGG");
+  // for (int& j : Js) {
+  //   std::shared_ptr<PrivateNeal2> wavelet_algo = get_algo1d(
+  //       PARAM_DIR + "bgg_params.asciipb", PARAM_DIR + "dp_gamma.asciipb",
+  //       PARAM_DIR + "algo.asciipb", "BetaGG");
 
-    // LAPLACE CHANNEL
-    double wave_sd = 12. / alpha * 3.41 * std::pow(2, 0.5 * j);
-    std::shared_ptr<WaveletChannel> wav_channel(
-        new WaveletChannel(j, wave_sd));
-    Eigen::MatrixXd wav_sanitized_data = wav_channel->sanitize(private_data);
-    wavelet_algo->set_channel(wav_channel);
-    wavelet_algo->set_public_data(wav_sanitized_data, -1, true);
+  //   // LAPLACE CHANNEL
+  //   double wave_sd = 12. / alpha * 3.41 * std::pow(2, 0.5 * j);
+  //   std::shared_ptr<WaveletChannel> wav_channel(
+  //       new WaveletChannel(j, wave_sd));
+  //   Eigen::MatrixXd wav_sanitized_data = wav_channel->sanitize(private_data);
+  //   wavelet_algo->set_channel(wav_channel);
+  //   wavelet_algo->set_public_data(wav_sanitized_data, -1, true);
 
-    BaseCollector* wav_coll = new MemoryCollector();
-    auto start = std::chrono::high_resolution_clock::now();
-    wavelet_algo->run(wav_coll);
-    auto end = std::chrono::high_resolution_clock::now();
-    Eigen::MatrixXd time(1, 1);
-    time(0, 0) =
-        std::chrono::duration_cast<std::chrono::milliseconds>(end - start)
-            .count();
-    save_stuff_to_file(ndata, alpha, repnum, time, private_data, wav_coll,
-                       wavelet_algo, "wavelet", j);
-    delete wav_coll;
-  }
+  //   BaseCollector* wav_coll = new MemoryCollector();
+  //   auto start = std::chrono::high_resolution_clock::now();
+  //   wavelet_algo->run(wav_coll);
+  //   auto end = std::chrono::high_resolution_clock::now();
+  //   Eigen::MatrixXd time(1, 1);
+  //   time(0, 0) =
+  //       std::chrono::duration_cast<std::chrono::milliseconds>(end - start)
+  //           .count();
+  //   save_stuff_to_file(ndata, alpha, repnum, time, private_data, wav_coll,
+  //                      wavelet_algo, "wavelet", j);
+  //   delete wav_coll;
+  // }
 }
